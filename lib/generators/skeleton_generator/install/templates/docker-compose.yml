@@ -1,0 +1,43 @@
+version: '3'
+services:
+  mail:
+    image: schickling/mailcatcher:latest
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+
+  db:
+    image: postgres:latest
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
+  app: &app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    command: bundle exec foreman start -f Procfile.dev
+    volumes:
+      - .:/opt/app
+      - app-bundle:/usr/local/bundle
+    ports:
+      - "3000:3000"
+      - "3035:3035"
+    depends_on:
+      - db
+      - mail
+    environment:
+      APP_DATABASE_HOST: db
+      APP_DATABASE_USERNAME: postgres
+      APP_DATABASE_PASSWORD: password
+      EDITOR: vi
+
+volumes:
+  db-data:
+  app-bundle:
+

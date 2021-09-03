@@ -1,0 +1,69 @@
+name: Rails
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+jobs:
+  build:
+    name: rails
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    container:
+      image: ruby:3.0.2
+      env:
+        RAILS_ENV: test
+        APP_DATABASE_HOST: postgres
+        APP_DATABASE_USER: postgres
+        APP_DATABASE_PASSWORD: password
+        POSTGRES_HOST: postgres
+        RAILS_DATABASE_USER: postgres
+        RAILS_DATABASE_PASSWORD: password
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: v1-${{ runner.os }}-bundle-${{ hashFiles('**/Gemfile.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: v1-${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Setup YARN and NodeJS
+        run: |
+          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+          curl -sL https://deb.nodesource.com/setup_16.x | bash -
+          apt-get install -y nodejs yarn
+      - name: Build and setup
+        run: |
+          gem install bundler --no-document -v $(grep "BUNDLED WITH" -1 Gemfile.lock | tail -n 1)
+          bundle config set deployment 'true'
+          bundle install --jobs 4 --retry 3
+          bundle exec rails yarn:install db:setup assets:precompile
+      - name: Run rspec
+        run: bundle exec rspec
+      - name: Run rubocop
+        run: bundle exec rubocop
+      - name: Run eslint
+        run: yarn lint
+      - name: Run stylelint
+        run: yarn stylelint
+      - name: Run Danger
+        run: bundle exec danger --fail-on-errors=true
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,10 @@
+Description:
+    Explain the service generator
+
+Example:
+    bin/rails generate skeleton_generator:service Thing
+
+    This will create:
+        app/services/application_service.rb
+        app/services/thing_service.rb
+        spec/services/thing_service_spec.rb

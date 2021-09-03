@@ -1,0 +1,17 @@
+message('このPRに変更はありません。') if git.modified_files.empty? && git.added_files.empty? && git.deleted_files.empty?
+
+todoist.message = 'すべてのTODOを修正してください。'
+todoist.warn_for_todos
+todoist.print_todos_table
+
+warn('READMEに変更があります。') if git.modified_files.include?('README.md')
+warn('設定ファイルが変更されました。') if git.modified_files.include?('config/*')
+warn('PRは進行中の作業として分類されます。') if github.pr_title.include? '[WIP]'
+warn('PRの説明に内容を入力してください。') if github.pr_body.length < 5
+warn('PRが大きすぎます。') if git.lines_of_code > 1000
+
+has_app_changes = !git.modified_files.grep(/^(app|lib)/).empty?
+has_test_changes = !git.modified_files.grep(/^(features|spec|test)/).empty?
+warn('コードの変更があります。このPRの場合はテストを含めてください。') if has_app_changes && !has_test_changes
+
+rubocop.lint

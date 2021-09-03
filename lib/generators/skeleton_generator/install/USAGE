@@ -1,0 +1,8 @@
+Description:
+    Explain the setup generator
+
+Example:
+    bin/rails generate skeleton_generator:install
+
+    This will create:
+        what/will/it/create

@@ -1,0 +1,37 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  },
+  "extends": [
+    "airbnb-base"
+  ],
+  "rules": {
+    "max-len": ["off"],
+    "max-lines": ["off"],
+    "semi": ["error", "never", { "beforeStatementContinuationChars": "never" }],
+    "semi-spacing": ["error", { "after": true, "before": false }],
+    "semi-style": ["error", "first"],
+    "no-extra-semi": "error",
+    "no-unexpected-multiline": "error",
+    "no-unreachable": "error",
+    "no-shadow": ["error", { "allow": ["state"] }],
+    "no-param-reassign": ["error", { "props": false }],
+    "import/no-unresolved": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": {
+          "resolve": {
+            "modules": ["node_modules"]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: <%= ENV.fetch('APP_DATABASE_HOST') { 'db' } %>
+  username: <%= ENV.fetch('APP_DATABASE_USERNAME') { 'postgres' } %>
+  password: <%= ENV.fetch('APP_DATABASE_PASSWORD') { 'password' } %>
+
+development:
+  <<: *default
+  database: bootstrap_development
+
+test:
+  <<: *default
+  host: <%= ENV.fetch('APP_DATABASE_HOST') { 'db' } %>
+  database: bootstrap_test
+
+staging:
+  <<: *default
+  database: bootstrap_development
+  url: <%= ENV['DATABASE_URL'] %>
+
+production:
+  <<: *default
+  database: bootstrap_production
+  url: <%= ENV['DATABASE_URL'] %>

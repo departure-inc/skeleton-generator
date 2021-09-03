@@ -1,0 +1,23 @@
+inherit_from: .rubocop.skeleton.yml
+
+AllCops:
+  TargetRubyVersion: 3.0
+  Include:
+    - "**/Rakefile"
+    - "**/config.ru"
+    - "app/**/*.rb"
+    - "spec/**/*.rb"
+    - "lib/**/*.rb"
+    - "config/**/*.rb"
+  Exclude:
+    - "config/routes.rb"
+    - "public/**/*"
+    - "tmp/**/*"
+    - "log/**/*"
+    - "bin/**/*"
+    - "db/**/*"
+    - "vendor/**/*"
+    - "node_modules/**/*"
+
+Rails:
+  Enabled: true
