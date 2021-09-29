@@ -2,14 +2,16 @@ module AppErrorResponder
   extend ActiveSupport::Concern
 
   included do
-    rescue_from Exception, with: :internal_server_error if Rails.env.production? || Rails.env.test?
-    rescue_from ActiveRecord::RecordNotFound, with: :not_found if Rails.env.production? || Rails.env.test?
-    rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity if Rails.env.production? || Rails.env.test?
-    rescue_from ActionController::RoutingError, with: :not_found if Rails.env.production? || Rails.env.test?
-    rescue_from AuthenticatedError, with: :unauthorized if Rails.env.production? || Rails.env.test?
-    rescue_from ForbiddenError, with: :forbidden if Rails.env.production? || Rails.env.test?
-    rescue_from ActiveModel::ValidationError, with: :unprocessable_entity if Rails.env.production? || Rails.env.test?
-    rescue_from ServiceNotExecuted, with: :unprocessable_entity if Rails.env.production? || Rails.env.test?
+    if Rails.env.production? || Rails.env.test?
+      rescue_from Exception, with: :internal_server_error
+      rescue_from ActiveRecord::RecordNotFound, with: :not_found
+      rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity?
+      rescue_from ActionController::RoutingError, with: :not_found
+      rescue_from AuthenticatedError, with: :unauthorized
+      rescue_from ForbiddenError, with: :forbidden
+      rescue_from ActiveModel::ValidationError, with: :unprocessable_entity
+      rescue_from ServiceNotExecuted, with: :unprocessable_entity
+    end
   end
 
   def not_found(exception = nil)

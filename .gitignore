@@ -4,6 +4,8 @@
 /pkg/
 /tmp/
 /test/
+/spec/dummy
+/spec/dummy.*
 /vendor/
 .byebug_history
 .DS_Store

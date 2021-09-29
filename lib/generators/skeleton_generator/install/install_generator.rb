@@ -9,18 +9,24 @@ module SkeletonGenerator
       initializer 'skeleton.rb', %(require 'skeleton_generator')
     end
 
-    def copy_system_files
+    def copy_docker_files
       copy_file 'Dockerfile', skip: true
       copy_file 'docker-compose.yml', skip: true
+    end
+
+    def copy_system_files
       copy_file 'Makefile'
       copy_file 'Dangerfile'
       copy_file 'Procfile'
       copy_file 'Procfile.dev'
     end
 
-    def copy_dot_files
+    def copy_rubocop_files
       copy_file '.rubocop.skeleton.yml'
       copy_file '.rubocop.yml'
+    end
+
+    def copy_lint_files
       copy_file '.slim-lint.yml'
       copy_file '.eslintrc.json'
       copy_file '.stylelintrc.json'
@@ -45,7 +51,7 @@ module SkeletonGenerator
       append_file '.gitignore', %(coverage/\n)
     end
 
-    def extend_root_gemfile
+    def extend_required_root_gemfile
       gem 'foreman'
       gem 'dotenv-rails'
       gem 'rack-cors'
@@ -88,6 +94,10 @@ module SkeletonGenerator
       directory 'config/initializers', force: true
     end
 
+    def download_locale_files
+      get 'https://raw.githubusercontent.com/svenfuchs/rails-i18n/master/rails/locale/ja.yml', 'config/locales/ja.yml'
+    end
+
     def copy_seed_files
       directory 'db/seeds'
       copy_file 'db/seeds.rb', force: true
@@ -112,33 +122,47 @@ module SkeletonGenerator
 
     def copy_view_files
       directory 'app/views'
+
+      remove_file 'app/views/layouts/application.html.erb'
+      remove_file 'app/views/layouts/mail.html.erb'
+      remove_file 'app/views/layouts/mail.text.erb'
     end
 
     def extend_application_config
-      log('prepend config/application.rb')
+      log :extend, 'config/application.rb'
       application application_config_content
     end
 
     def extend_environments_config
       copy_file 'config/environments/staging.rb'
 
-      log('prepend config/environments/production.rb')
+      log :extend, 'config/environments/production.rb'
       application(nil, env: :production) do
         mail_config_content
       end
 
-      log('prepend config/environments/development.rb')
+      log :extend, 'config/environments/development.rb'
       application(nil, env: :development) do
         mail_config_content
       end
     end
 
-    def generators
-      if yes?('Would you like to bundle? (y/N)')
-        Bundler.with_clean_env { in_root { run 'bundle' } }
-        generate 'rspec:install'
-        generate 'bullet:install'
-      end
+    def bundle_generators
+      return unless yes?('Would you like to bundle? (y/N)')
+
+      Bundler.with_clean_env { in_root { run 'bundle' } }
+      generate 'rspec:install'
+      generate 'bullet:install'
+    end
+
+    def bundle_webpacker
+      return unless yes?('Would you like to Webpacker? (y/N)')
+
+      Bundler.with_clean_env { in_root { run 'bundle' } }
+      generate 'webpacker:install'
+    end
+
+    def output_readme
       readme 'README'
     end
 
@@ -152,6 +176,7 @@ module SkeletonGenerator
         config.generators do |g|
           g.stylesheets false
           g.javascripts false
+          g.jbuilder false
           g.helper false
           g.assets false
           g.test_framework :rspec, view_specs: false, helper_specs: false, routing_specs: false
