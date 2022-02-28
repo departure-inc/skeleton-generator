@@ -4,7 +4,7 @@ class ApplicationService
   end
 
   def initialize(args)
-    @context = OpenStruct.new(args)
+    @context = args
   end
 
   def call
