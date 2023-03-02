@@ -13,5 +13,3 @@ warn('PRが大きすぎます。') if git.lines_of_code > 1000
 has_app_changes = !git.modified_files.grep(/^(app|lib)/).empty?
 has_test_changes = !git.modified_files.grep(/^(features|spec|test)/).empty?
 warn('コードの変更があります。このPRの場合はテストを含めてください。') if has_app_changes && !has_test_changes
-
-rubocop.lint

@@ -24,7 +24,7 @@ jobs:
           POSTGRES_DB: test
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     container:
-      image: ruby:3.1.1
+      image: ruby:3.2.1
       env:
         RAILS_ENV: test
         APP_DATABASE_HOST: postgres
@@ -34,34 +34,21 @@ jobs:
         RAILS_DATABASE_USER: postgres
         RAILS_DATABASE_PASSWORD: password
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: vendor/bundle
           key: v1-${{ runner.os }}-bundle-${{ hashFiles('**/Gemfile.lock') }}
-      - uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: v1-${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - name: Setup YARN and NodeJS
-        run: |
-          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-          echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-          apt-get install -y yarn
       - name: Build and setup
         run: |
           gem install bundler --no-document -v $(grep "BUNDLED WITH" -1 Gemfile.lock | tail -n 1)
           bundle config set deployment 'true'
           bundle install --jobs 4 --retry 3
-          bundle exec rails yarn:install db:setup assets:precompile
+          bundle exec rails db:setup assets:precompile
       - name: Run rspec
         run: bundle exec rspec
       - name: Run rubocop
         run: bundle exec rubocop
-      - name: Run eslint
-        run: yarn lint
-      - name: Run stylelint
-        run: yarn stylelint
       - name: Run Danger
         run: bundle exec danger --fail-on-errors=true
         env:
