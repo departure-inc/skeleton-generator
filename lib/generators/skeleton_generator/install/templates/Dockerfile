@@ -23,7 +23,8 @@ FROM development AS builder
 ENV RAILS_ENV=production
 ENV RACK_ENV=production
 RUN <<eos
-bundle install --jobs=4 --retry=3 --path=vendor/bundle
+bundle config set path vendor/bundle
+bundle install --jobs=4 --retry=3
 eos
 
 FROM ruby:3.1.2-slim AS production
