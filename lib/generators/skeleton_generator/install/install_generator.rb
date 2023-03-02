@@ -55,6 +55,7 @@ module SkeletonGenerator
     end
 
     def extend_required_root_gemfile
+      run 'touch Gemfile'
       gem 'foreman'
       gem 'dotenv-rails'
       gem 'rack-cors'
@@ -72,11 +73,6 @@ module SkeletonGenerator
         gem 'factory_bot_rails'
         gem 'rspec-rails'
         gem 'slim_lint', require: false
-      end
-    end
-
-    def extend_group_development_gemfile
-      gem_group :development do
         gem 'bullet'
       end
     end
@@ -91,8 +87,11 @@ module SkeletonGenerator
       end
     end
 
+    def copy_config_database_file
+      copy_file 'config/database.yml'
+    end
+
     def copy_config_files
-      copy_file 'config/database.yml', force: true
       directory 'config/global'
       directory 'config/initializers', force: true
     end
@@ -109,8 +108,12 @@ module SkeletonGenerator
     def extend_routes
       directory 'config/routes'
 
-      route %(root to: 'general#index')
+      route %(root to: 'welcome#index')
       route 'draw :base'
+    end
+
+    def generate_root_resources
+      directory 'app/controllers'
     end
 
     def extend_controller_files
