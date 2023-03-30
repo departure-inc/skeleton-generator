@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    skeleton_generator (0.3.2)
+    skeleton_generator (0.3.4)
       rails (~> 7.0.4.2)
 
 GEM

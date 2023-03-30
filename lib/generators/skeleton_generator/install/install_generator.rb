@@ -17,7 +17,6 @@ module SkeletonGenerator
     def copy_system_files
       copy_file 'Makefile'
       copy_file 'Dangerfile'
-      copy_file 'Procfile'
       copy_file 'Procfile.dev'
     end
 
@@ -98,6 +97,7 @@ module SkeletonGenerator
 
     def download_locale_files
       get 'https://raw.githubusercontent.com/svenfuchs/rails-i18n/master/rails/locale/ja.yml', 'config/locales/ja.yml'
+      get 'https://raw.githubusercontent.com/svenfuchs/rails-i18n/master/rails/locale/en.yml', 'config/locales/en.yml'
     end
 
     def copy_seed_files
@@ -151,6 +151,27 @@ module SkeletonGenerator
       application(nil, env: :development) do
         mail_config_content
       end
+    end
+
+    def extend_heroku_config
+      return unless yes?('Would you like to heroku? (y/N)')
+
+      copy_file 'Procfile'
+      readme 'heroku.md'
+    end
+
+    def extend_flyio_config
+      return unless yes?('Would you like to fly.io? (y/N)')
+
+      readme 'fly.md'
+    end
+
+    def extend_datadog_config
+      return unless yes?('Would you like to datadog? (y/N)')
+
+      gem 'ddtrace'
+      copy_file 'config/initializers/datadog.rb'
+      Bundler.with_original_env { in_root { run 'bundle' } }
     end
 
     def bundle_generator_rspec

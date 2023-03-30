@@ -8,12 +8,12 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'herokuapps.com', protocol: 'https' }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: ENV['MAIL_SMTP_ADDRESS'],
-    port: ENV['MAIL_SMTP_PORT'],
-    domain: ENV['MAIL_SMTP_DOMAIN'],
-    authentication: ENV['MAIL_SMTP_AUTH'],
-    user_name: ENV['SENDGRID_USERNAME'],
-    password: ENV['SENDGRID_PASSWORD'],
+    address: ENV.fetch('MAIL_SMTP_ADDRESS', 'smtp.sendgrid.net'),
+    port: ENV.fetch('MAIL_SMTP_PORT', 587),
+    domain: ENV.fetch('MAIL_SMTP_DOMAIN', 'herokuapps.com'),
+    authentication: ENV.fetch('MAIL_SMTP_AUTH', 'plain'),
+    user_name: ENV.fetch('SENDGRID_USERNAME', 'apikey'),
+    password: ENV.fetch('SENDGRID_PASSWORD', 'SG.xxx'),
     enable_starttls_auto: true
   }
   # config.active_job.queue_adapter = :inline
