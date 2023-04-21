@@ -4,12 +4,17 @@ skeleton structure generators libraries.
 ## Usage
 How to use my plugin.
 
+initial core file placement.
 ```bash
 $ bundle exec rails g skeleton_generator:install
-$ bundle exec rails g skeleton_generator:service CreateThing
-$ bundle exec rails g skeleton_generator:batch ImportThing
-$ bundle exec rails g skeleton_generator:form Thing
-$ bundle exec rails g skeleton_generator:view_model Thing
+```
+
+dependency generator command.
+```bash
+$ bundle exec rails g service CreateThing
+$ bundle exec rails g batch ImportThing
+$ bundle exec rails g form Thing
+$ bundle exec rails g view_model Thing
 ```
 
 ## Installation

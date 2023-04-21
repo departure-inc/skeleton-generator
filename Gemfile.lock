@@ -1,8 +1,40 @@
+GIT
+  remote: https://github.com/departure-inc/batch-generator.git
+  revision: b0991bc047043209d313ee3233630d8b73797900
+  specs:
+    batch_generator (1.0.0)
+      rails (>= 7.0.4.3)
+
+GIT
+  remote: https://github.com/departure-inc/form-generator.git
+  revision: fc07f66863d4ea94c26bf7a70e380ab18c582f09
+  specs:
+    form_generator (1.0.0)
+      rails (>= 7.0.4.3)
+
+GIT
+  remote: https://github.com/departure-inc/service-generator.git
+  revision: 2305b69fb415a410311bac7082af5e94fdf00478
+  specs:
+    service_generator (1.0.0)
+      rails (>= 7.0.4.3)
+
+GIT
+  remote: https://github.com/departure-inc/view_model-generator.git
+  revision: 06a6e45402d0ea25333dc02ced566497236ecc0e
+  specs:
+    view_model_generator (1.0.0)
+      rails (>= 7.0.4.3)
+
 PATH
   remote: .
   specs:
-    skeleton_generator (0.3.4)
-      rails (~> 7.0.4.2)
+    skeleton_generator (1.0.0)
+      batch_generator
+      form_generator
+      rails (~> 7.0.4.3)
+      service_generator
+      view_model_generator
 
 GEM
   remote: https://rubygems.org/
@@ -85,7 +117,7 @@ GEM
       activesupport (>= 5.0)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    loofah (2.19.1)
+    loofah (2.20.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.8.1)
@@ -106,10 +138,10 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
-    nio4r (2.5.8)
-    nokogiri (1.14.2-x86_64-darwin)
+    nio4r (2.5.9)
+    nokogiri (1.14.3-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.14.2-x86_64-linux)
+    nokogiri (1.14.3-x86_64-linux)
       racc (~> 1.4)
     parallel (1.22.1)
     parser (3.1.2.0)
@@ -200,14 +232,18 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  batch_generator!
   byebug
+  form_generator!
   pry
   rspec
   rubocop
   rubocop-rails
   rubocop-rspec
+  service_generator!
   skeleton_generator!
   sqlite3
+  view_model_generator!
 
 BUNDLED WITH
    2.3.7
