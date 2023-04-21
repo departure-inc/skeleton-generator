@@ -1,8 +1,9 @@
 require_relative "lib/skeleton_generator/version"
+version = SkeletonGenerator::VERSION
 
 Gem::Specification.new do |spec|
   spec.name        = "skeleton_generator"
-  spec.version     = SkeletonGenerator::VERSION
+  spec.version     = version
   spec.authors     = ["kawashima@dptr.jp"]
   spec.email       = ["kawashima@dptr.jp"]
   spec.homepage    = "https://dptr.jp"
@@ -20,5 +21,9 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  spec.add_dependency "rails", "~> 7.0.4.2"
+  spec.add_dependency "rails", "~> 7.0.4.3"
+  spec.add_runtime_dependency "service_generator" #, "~> 1.0.0"
+  spec.add_runtime_dependency "form_generator" #, "~> 1.0.0"
+  spec.add_runtime_dependency "batch_generator" #, "~> 1.0.0"
+  spec.add_runtime_dependency "view_model_generator" #, "~> 1.0.0"
 end
