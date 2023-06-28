@@ -99,7 +99,10 @@ module SkeletonGenerator
 
     def copy_config_files
       directory 'config/global'
-      directory 'config/initializers', force: true
+      copy_file 'config/initializers/0_exception.rb'
+      copy_file 'config/initializers/cors.rb'
+      copy_file 'config/initializers/global.rb'
+      copy_file 'config/initializers/raven.rb'
     end
 
     def download_locale_files
