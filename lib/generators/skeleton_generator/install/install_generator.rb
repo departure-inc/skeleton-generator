@@ -64,6 +64,13 @@ module SkeletonGenerator
       gem 'kaminari'
     end
 
+    def extend_skeleton_gemfile
+      gem 'service_generator', github: 'departure-inc/service-generator'
+      gem 'form_generator', github: 'departure-inc/form-generator'
+      gem 'batch_generator', github: 'departure-inc/batch-generator'
+      gem 'view_model_generator', github: 'departure-inc/view_model-generator'
+    end
+
     def extend_groups_gemfile
       gem_group :development, :test do
         gem 'brakeman', require: false
