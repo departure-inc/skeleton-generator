@@ -29,7 +29,7 @@ GIT
 PATH
   remote: .
   specs:
-    skeleton_generator (1.0.4)
+    skeleton_generator (1.0.5)
       batch_generator
       form_generator
       rails (>= 7.0.4.3)
