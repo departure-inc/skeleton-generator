@@ -29,12 +29,8 @@ GIT
 PATH
   remote: .
   specs:
-    skeleton_generator (1.0.5)
-      batch_generator
-      form_generator
+    skeleton_generator (1.0.6)
       rails (>= 7.0.4.3)
-      service_generator
-      view_model_generator
 
 GEM
   remote: https://rubygems.org/
