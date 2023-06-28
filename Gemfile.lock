@@ -1,27 +1,31 @@
 GIT
   remote: https://github.com/departure-inc/batch-generator.git
-  revision: b0991bc047043209d313ee3233630d8b73797900
+  revision: 0fc08469d51fb47d74358190f2fe5113afee2a1f
+  branch: v1.0.0
   specs:
     batch_generator (1.0.0)
       rails (>= 7.0.4.3)
 
 GIT
   remote: https://github.com/departure-inc/form-generator.git
-  revision: fc07f66863d4ea94c26bf7a70e380ab18c582f09
+  revision: eaadb32bd69dc4381b9b6bd40ba3d6110ad22fa1
+  branch: v1.0.0
   specs:
     form_generator (1.0.0)
       rails (>= 7.0.4.3)
 
 GIT
   remote: https://github.com/departure-inc/service-generator.git
-  revision: 2305b69fb415a410311bac7082af5e94fdf00478
+  revision: 989d765f2b3a2e58809e20944193810df05db5cd
+  branch: v1.0.0
   specs:
     service_generator (1.0.0)
       rails (>= 7.0.4.3)
 
 GIT
   remote: https://github.com/departure-inc/view_model-generator.git
-  revision: 06a6e45402d0ea25333dc02ced566497236ecc0e
+  revision: b9bdda4fd69c9733947232eafa85ca23cf17af14
+  branch: v1.0.0
   specs:
     view_model_generator (1.0.0)
       rails (>= 7.0.4.3)
@@ -30,11 +34,11 @@ PATH
   remote: .
   specs:
     skeleton_generator (1.0.0)
-      batch_generator
-      form_generator
-      rails (~> 7.0.4.3)
-      service_generator
-      view_model_generator
+      batch_generator (>= 1.0.0)
+      form_generator (>= 1.0.0)
+      rails (>= 7.0.4.3)
+      service_generator (>= 1.0.0)
+      view_model_generator (>= 1.0.0)
 
 GEM
   remote: https://rubygems.org/
