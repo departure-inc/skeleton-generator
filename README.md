@@ -20,7 +20,12 @@ $ bundle exec rails g view_model Thing
 ## Installation
 Add this line to your application's Gemfile:
 
+
 ```ruby
+# Gemfile
+ruby '3.3.1'
+gem 'rails', '~> 7.1.3', '>= 7.1.3.2'
+
 gem 'skeleton_generator', github: 'departure-inc/skeleton-generator'
 ```
 

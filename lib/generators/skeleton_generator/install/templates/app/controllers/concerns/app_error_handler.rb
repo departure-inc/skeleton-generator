@@ -1,9 +1,10 @@
 #
+# @note エラーハンドリングを拡張するときに利用してください
 # @example
 # include AppErrorHandler
 #
 # def create
-#   result = AppErrorHandler.with_io_error_handling do
+#   result = AppErrorHandler.handle do
 #     service = UpsertUserService.new(user: current_user)
 #     service.invoke!
 #     service.result
@@ -16,6 +17,17 @@
 #   end
 # end
 #
+# @deprecated Rails7.1以降は`Rails.error.handle`を使用してください
+# @example
+# def create
+#   result = Rails.error.handle do
+#     response = UpsertUserService.call(user: current_user)
+#     response.result
+#   end
+#
+#   render json: result.object, status: result.status
+# end
+#
 
 class AppErrorHandler
   include ActiveModel::Model
@@ -23,7 +35,7 @@ class AppErrorHandler
 
   attribute :exception
 
-  def self.with_io_error_handling
+  def self.handle
     yield
   rescue ServiceNotExecuted,
          AuthenticatedError,
@@ -34,7 +46,7 @@ class AppErrorHandler
          PG::ConnectionBad,
          ActiveRecord::NoDatabaseError,
          RuntimeError => e
-    Sentry.capture_exception(e)
+    Rails.error.report(e)
     Rails.logger.error(e)
     new(exception: e)
   end

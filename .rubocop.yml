@@ -1,10 +1,12 @@
 require:
   - rubocop-rails
+  - rubocop-performance
   - rubocop-rspec
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.0
+  SuggestExtensions: false
+  TargetRubyVersion: 3.3
   Include:
     - "spec/**/*.rb"
     - "lib/**/*.rb"

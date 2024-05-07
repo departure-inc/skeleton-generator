@@ -16,6 +16,8 @@ group :development, :test do
   gem 'byebug'
   gem 'rubocop'
   gem 'rubocop-rails'
+  gem 'rubocop-performance'
   gem 'rubocop-rspec'
   gem 'rspec'
+  gem 'generator_spec'
 end
