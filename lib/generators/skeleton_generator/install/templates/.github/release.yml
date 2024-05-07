@@ -1,0 +1,18 @@
+changelog:
+  exclude:
+    authors:
+      - dependabot
+      - github-actions
+  categories:
+    - title: 🚀 Features
+      labels:
+        - "*"
+      exclude:
+        labels:
+          - dependencies
+    - title: 💊 Bug Fix
+      labels:
+        - "bug"
+    - title: 👒 Dependencies
+      labels:
+        - dependencies

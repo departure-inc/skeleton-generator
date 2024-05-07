@@ -18,7 +18,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       target: development
     command: bundle exec foreman start -f Procfile.dev
     tty: true

@@ -1,3 +1,3 @@
 module SkeletonGenerator
-  VERSION = '1.0.7'.freeze
+  VERSION = '1.1.1'.freeze
 end

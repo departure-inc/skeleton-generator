@@ -4,13 +4,15 @@ module SkeletonGenerator
   class InstallGenerator < Rails::Generators::Base
     source_root File.expand_path('templates', __dir__)
 
+    class_option :skip, type: :boolean, default: false, desc: 'Skip confirm. Default: false.'
+
     desc 'skeleton core file structure.'
     def generate_initalize_file
       initializer 'skeleton.rb', %(require 'skeleton_generator')
     end
 
     def copy_docker_files
-      copy_file 'Dockerfile', skip: true
+      copy_file 'Dockerfile.dev', skip: true
       copy_file 'compose.yml', skip: true
     end
 
@@ -26,7 +28,8 @@ module SkeletonGenerator
     end
 
     def copy_lint_files
-      return unless yes?('Would you like to lintrc? (y/N)')
+      return if options[:skip]
+      return unless yes?('Would you like to lintrc files? (y/N)')
 
       copy_file '.slim-lint.yml'
       copy_file '.eslintrc.json'
@@ -56,12 +59,18 @@ module SkeletonGenerator
     def extend_required_root_gemfile
       run 'touch Gemfile'
       gem 'foreman'
-      gem 'dotenv-rails'
       gem 'rack-cors'
       gem 'global'
-      gem 'slim-rails'
-      gem 'sentry-ruby'
+      gem 'sentry-rails'
       gem 'kaminari'
+      gem 'ransack'
+    end
+
+    def extend_webapp_root_gemfile
+      return if options[:skip]
+      return unless yes?('Would you like to WebApp files? (y/N)')
+
+      gem 'slim-rails'
     end
 
     def extend_skeleton_gemfile
@@ -73,9 +82,11 @@ module SkeletonGenerator
 
     def extend_groups_gemfile
       gem_group :development, :test do
+        gem 'dotenv-rails'
         gem 'brakeman', require: false
-        gem 'rubocop-rails'
-        gem 'rubocop-rspec'
+        gem 'rubocop-rails', require: false
+        gem 'rubocop-rspec', require: false
+        gem 'rubocop-performance', require: false
         gem 'factory_bot_rails'
         gem 'rspec-rails'
         gem 'slim_lint', require: false
@@ -164,19 +175,22 @@ module SkeletonGenerator
     end
 
     def extend_heroku_config
+      return if options[:skip]
       return unless yes?('Would you like to heroku? (y/N)')
 
       copy_file 'Procfile'
-      readme 'heroku.md'
+      readme 'doc/heroku.md'
     end
 
     def extend_flyio_config
+      return if options[:skip]
       return unless yes?('Would you like to fly.io? (y/N)')
 
-      readme 'fly.md'
+      readme 'doc/fly.md'
     end
 
     def extend_datadog_config
+      return if options[:skip]
       return unless yes?('Would you like to datadog? (y/N)')
 
       gem 'ddtrace'
@@ -185,6 +199,7 @@ module SkeletonGenerator
     end
 
     def bundle_generator_rspec
+      return if options[:skip]
       return unless yes?('Would you like to rspec? (y/N)')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
@@ -192,6 +207,7 @@ module SkeletonGenerator
     end
 
     def bundle_generator_bullet
+      return if options[:skip]
       return unless yes?('Would you like to bullet? (y/N)')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
@@ -199,16 +215,31 @@ module SkeletonGenerator
     end
 
     def bundle_importmap
+      return if options[:skip]
       return unless yes?('Would you like to importmap? (y/N)')
 
       gem 'importmap-rails'
-      gem 'turbo-rails'
-      gem 'stimulus-rails'
-      gem 'tailwindcss-rails'
       Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'importmap:install'
+    end
+
+    def bundle_stimulus
+      return if options[:skip]
+      return unless yes?('Would you like to hotwire and stimulus? (y/N)')
+
+      gem 'turbo-rails'
+      gem 'stimulus-rails'
+      Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'turbo:install'
       rails_command 'stimulus:install'
+    end
+
+    def bundle_css
+      return if options[:skip]
+      return unless yes?('Would you like to tailwindcss? (y/N)')
+
+      gem 'tailwindcss-rails'
+      Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'tailwindcss:install'
     end
 
