@@ -10,14 +10,16 @@
 #     service.result
 #   end
 #
-#   if result.try(:handled?)
+#   if result.handled?
 #     # error handling code
+#     render json: result.to_response, status: :internal_server_error
 #   else
 #     # success code
+#     render json: result.object, status: :ok
 #   end
 # end
 #
-# @deprecated Rails7.1以降は`Rails.error.handle`を使用してください
+# @deprecated Rails7.1以降は状況に応じて`Rails.error.handle`を使用してください
 # @example
 # def create
 #   result = Rails.error.handle do
@@ -25,7 +27,7 @@
 #     response.result
 #   end
 #
-#   render json: result.object, status: result.status
+#   render json: result, status: :ok
 # end
 #
 
@@ -34,11 +36,14 @@ class AppErrorHandler
   include ActiveModel::Attributes
 
   attribute :exception
+  attribute :object
 
   def self.handle
-    yield
+    object = yield
+    new(exception: nil, object:)
   rescue ServiceNotExecuted,
          AuthenticatedError,
+         ActiveRecord::StatementInvalid,
          ActiveRecord::RecordNotFound,
          ActiveRecord::RecordInvalid,
          ActiveModel::ValidationError,
