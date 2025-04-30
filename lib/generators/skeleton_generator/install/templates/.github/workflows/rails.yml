@@ -24,7 +24,7 @@ jobs:
           POSTGRES_DB: test
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     container:
-      image: ruby:3.2.1
+      image: ruby:3.3.5
       env:
         RAILS_ENV: test
         APP_DATABASE_HOST: postgres
@@ -34,11 +34,14 @@ jobs:
         RAILS_DATABASE_USER: postgres
         RAILS_DATABASE_PASSWORD: password
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        id: cache_dependencies
+        env:
+          cache-name: cache-dependencies
         with:
           path: vendor/bundle
-          key: v1-${{ runner.os }}-bundle-${{ hashFiles('**/Gemfile.lock') }}
+          key: v1-${{ runner.os }}-bundle-${{env.cache-name}}-${{ hashFiles('**/Gemfile.lock') }}
       - name: Build and setup
         run: |
           gem install bundler --no-document -v $(grep "BUNDLED WITH" -1 Gemfile.lock | tail -n 1)

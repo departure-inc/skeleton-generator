@@ -4,6 +4,11 @@ skeleton structure generators libraries.
 ## Usage
 How to use my plugin.
 
+initial rails project example.
+```bash
+$ rails new sample-app -d postgresql -T -B -a propshaft -c tailwind -t rspec --docker --skip-jbuilder
+```
+
 initial core file placement.
 ```bash
 $ bundle exec rails g skeleton_generator:install
@@ -15,6 +20,7 @@ $ bundle exec rails g service CreateThing
 $ bundle exec rails g batch ImportThing
 $ bundle exec rails g form Thing
 $ bundle exec rails g view_model Thing
+$ bundle exec rails g admin Thing
 ```
 
 ## Installation
@@ -23,8 +29,8 @@ Add this line to your application's Gemfile:
 
 ```ruby
 # Gemfile
-ruby '3.3.1'
-gem 'rails', '~> 7.1.3', '>= 7.1.3.2'
+ruby '3.3.5'
+gem 'rails', '~> 8.0.1'
 
 gem 'skeleton_generator', github: 'departure-inc/skeleton-generator'
 ```

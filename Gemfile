@@ -8,6 +8,7 @@ gem 'service_generator', github: 'departure-inc/service-generator'
 gem 'batch_generator', github: 'departure-inc/batch-generator'
 gem 'form_generator', github: 'departure-inc/form-generator'
 gem 'view_model_generator', github: 'departure-inc/view_model-generator'
+gem 'admin_generator', github: 'departure-inc/admin-generator'
 
 # To use a debugger
 group :development, :test do

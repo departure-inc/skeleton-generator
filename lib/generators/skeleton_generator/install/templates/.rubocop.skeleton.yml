@@ -1,4 +1,4 @@
-require:
+plugins:
   - rubocop-rails
   - rubocop-performance
   - rubocop-rspec
@@ -78,6 +78,12 @@ RSpec/MultipleMemoizedHelpers:
 
 Lint/EmptyBlock:
   Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  SupportedStyles:
+    - single_quotes
+    - double_quotes
 
 Rails/SkipsModelValidations:
   AllowedMethods:
