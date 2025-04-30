@@ -4,16 +4,15 @@ module SkeletonGenerator
   class InstallGenerator < Rails::Generators::Base
     source_root File.expand_path('templates', __dir__)
 
-    class_option :skip, type: :boolean, default: false, desc: 'Skip confirm. Default: false.'
-
     desc 'skeleton core file structure.'
     def generate_initalize_file
       initializer 'skeleton.rb', %(require 'skeleton_generator')
     end
 
     def copy_docker_files
-      copy_file 'Dockerfile.dev', skip: true
-      copy_file 'compose.yml', skip: true
+      copy_file 'Dockerfile.dev'
+      copy_file 'compose.dev.yml'
+      readme 'doc/docker.md'
     end
 
     def copy_system_files
@@ -23,17 +22,9 @@ module SkeletonGenerator
     end
 
     def copy_rubocop_files
+      create_file '.rubocop.yml'
       copy_file '.rubocop.skeleton.yml'
-      copy_file '.rubocop.yml'
-    end
-
-    def copy_lint_files
-      return if options[:skip]
-      return unless yes?('Would you like to lintrc files? (y/N)')
-
-      copy_file '.slim-lint.yml'
-      copy_file '.eslintrc.json'
-      copy_file '.stylelintrc.json'
+      append_file '.rubocop.yml', %(inherit_from: .rubocop.skeleton.yml\n)
     end
 
     def generate_dot_env
@@ -67,8 +58,7 @@ module SkeletonGenerator
     end
 
     def extend_webapp_root_gemfile
-      return if options[:skip]
-      return unless yes?('Would you like to WebApp files? (y/N)')
+      return unless yes?('Would you like to slim files? (y/N)')
 
       gem 'slim-rails'
     end
@@ -78,18 +68,15 @@ module SkeletonGenerator
       gem 'form_generator', github: 'departure-inc/form-generator'
       gem 'batch_generator', github: 'departure-inc/batch-generator'
       gem 'view_model_generator', github: 'departure-inc/view_model-generator'
+      gem 'admin_generator', github: 'departure-inc/admin-generator'
     end
 
     def extend_groups_gemfile
       gem_group :development, :test do
         gem 'dotenv-rails'
-        gem 'brakeman', require: false
-        gem 'rubocop-rails', require: false
-        gem 'rubocop-rspec', require: false
         gem 'rubocop-performance', require: false
         gem 'factory_bot_rails'
         gem 'rspec-rails'
-        gem 'slim_lint', require: false
         gem 'bullet'
       end
     end
@@ -105,14 +92,32 @@ module SkeletonGenerator
     end
 
     def copy_config_database_file
-      copy_file 'config/database.yml'
+      # copy_file 'config/database.yml'
+      # config/database.ymlのdefaultセクションの設定を変更する
+      gsub_file 'config/database.yml', /default: &default\n/, <<~YAML
+        default: &default
+          adapter: postgresql
+          encoding: unicode
+          pool: 5
+          host: <%= ENV.fetch('APP_DATABASE_HOST') { 'db' } %>
+          username: <%= ENV.fetch('APP_DATABASE_USERNAME') { 'postgres' } %>
+          password: <%= ENV.fetch('APP_DATABASE_PASSWORD') { 'password' } %>
+          port: <%= ENV.fetch('APP_DATABASE_PORT') { 5432 } %>
+          url: <%= ENV['DATABASE_URL'] %>
+      YAML
+
+      append_file 'config/database.yml', <<~YAML
+        staging:
+          <<: *default
+          database: app_name_staging
+      YAML
     end
 
     def copy_config_files
       directory 'config/global'
       copy_file 'config/initializers/0_exception.rb'
-      copy_file 'config/initializers/cors.rb'
       copy_file 'config/initializers/global.rb'
+      copy_file 'config/initializers/cors.rb'
       copy_file 'config/initializers/raven.rb'
     end
 
@@ -175,22 +180,19 @@ module SkeletonGenerator
     end
 
     def extend_heroku_config
-      return if options[:skip]
       return unless yes?('Would you like to heroku? (y/N)')
 
       copy_file 'Procfile'
       readme 'doc/heroku.md'
     end
 
-    def extend_flyio_config
-      return if options[:skip]
-      return unless yes?('Would you like to fly.io? (y/N)')
+    def extend_digitalocean_config
+      return unless yes?('Would you like to digitalocean? (y/N)')
 
-      readme 'doc/fly.md'
+      readme 'doc/digitalocean.md'
     end
 
     def extend_datadog_config
-      return if options[:skip]
       return unless yes?('Would you like to datadog? (y/N)')
 
       gem 'ddtrace'
@@ -199,7 +201,6 @@ module SkeletonGenerator
     end
 
     def bundle_generator_rspec
-      return if options[:skip]
       return unless yes?('Would you like to rspec? (y/N)')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
@@ -207,7 +208,6 @@ module SkeletonGenerator
     end
 
     def bundle_generator_bullet
-      return if options[:skip]
       return unless yes?('Would you like to bullet? (y/N)')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
@@ -215,30 +215,23 @@ module SkeletonGenerator
     end
 
     def bundle_importmap
-      return if options[:skip]
       return unless yes?('Would you like to importmap? (y/N)')
 
-      gem 'importmap-rails'
       Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'importmap:install'
     end
 
     def bundle_stimulus
-      return if options[:skip]
       return unless yes?('Would you like to hotwire and stimulus? (y/N)')
 
-      gem 'turbo-rails'
-      gem 'stimulus-rails'
       Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'turbo:install'
       rails_command 'stimulus:install'
     end
 
     def bundle_css
-      return if options[:skip]
       return unless yes?('Would you like to tailwindcss? (y/N)')
 
-      gem 'tailwindcss-rails'
       Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'tailwindcss:install'
     end

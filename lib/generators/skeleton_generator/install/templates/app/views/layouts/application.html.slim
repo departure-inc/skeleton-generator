@@ -1,10 +1,18 @@
 doctype html
 html
   head
-    title
-      | Bootstrap
+    title = content_for(:title) || 'Rails Skeleton'
+    meta name='viewport' content='width=device-width, initial-scale=1'
+    meta name='apple-mobile-web-app-capable' content='yes'
+    meta name='mobile-web-app-capable' content='yes'
     = csrf_meta_tags
     = csp_meta_tag
+
+    = yield :head
+
+    // PWA
+    //= tag.link rel: "manifest", href: pwa_manifest_path(format: :json)
+
     = stylesheet_link_tag 'tailwind', 'inter-font', 'data-turbo-track': 'reload'
     = stylesheet_link_tag 'application', 'data-turbo-track': 'reload'
     = javascript_importmap_tags

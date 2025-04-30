@@ -1,7 +1,4 @@
 <!-- I want to review in Japanese. -->
-
-# WHY
-
 # WHAT
 
 <!-- I want to review in Japanese. -->

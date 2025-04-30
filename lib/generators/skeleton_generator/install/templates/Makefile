@@ -1,8 +1,10 @@
 #!make
 
 ### Constants
-REGISTRY_DOMAIN := example.com
+REGISTRY_DOMAIN := 123456.dkr.ecr.ap-northeast-1.amazonaws.com
 REPOSITORY_NAME := bootstrap
+REGION := ap-northeast-1
+IMAGE_TAG := $(shell git describe --always --tag)
 
 ### Interpolations
 IMAGE_NAME := $(REGISTRY_DOMAIN)/$(REPOSITORY_NAME)
@@ -14,59 +16,57 @@ help: ## displays this help screen.
 
 
 build:
-	docker-compose build
+	docker compose -f compose.dev.yml build
 
 console:
-	docker-compose run --rm app bundle exec rails console
+	docker compose -f compose.dev.yml run --rm app bundle exec rails console
 
 up:
 	rm -rf tmp/pids/*
 	touch tmp/caching-dev.txt
-	docker-compose up
+	docker compose -f compose.dev.yml up
 
 stop:
-	docker-compose stop
+	docker compose -f compose.dev.yml stop
 
 down:
-	docker-compose down
+	docker compose -f compose.dev.yml down
 
 install:
-	docker-compose run --rm app bundle install
-	docker-compose run --rm app yarn install
+	docker compose -f compose.dev.yml run --rm app bundle install
 
 lint:
-	docker-compose run --rm app bundle exec rubocop
-	docker-compose run --rm app yarn lint
-	docker-compose run --rm app yarn stylelint
-	docker-compose run --rm app bundle exec slim-lint app/views/
+	docker compose -f compose.dev.yml run --rm app bundle exec rubocop
 
 rspec:
-	docker-compose run --rm app bundle exec rspec
+	docker compose -f compose.dev.yml run --rm app bundle exec rspec
 
-fix:
-	docker-compose run --rm app bundle exec rubocop -a
-	docker-compose run --rm app yarn lint --fix
-	docker-compose run --rm app yarn stylelint --fix
+lint-fix:
+	docker compose -f compose.dev.yml run --rm app bundle exec rubocop -a
 
 migrate:
-	docker-compose run --rm app bundle exec rails db:migrate
+	docker compose -f compose.dev.yml run --rm app bundle exec rails db:migrate
 
 reset-db:
-	docker-compose run --rm app bundle exec rails db:migrate:reset db:seed
+	docker compose -f compose.dev.yml run --rm app bundle exec rails db:migrate:reset db:seed
 
 setup:
-	docker-compose run --rm app bundle exec rails db:drop db:create db:migrate db:seed
+	docker compose -f compose.dev.yml run --rm app bundle exec rails db:drop db:create db:migrate db:seed
 
 bash:
-	docker-compose exec app /bin/bash
+	docker compose -f compose.dev.yml exec app /bin/bash
 
 test: lint rspec
 
 all: build install setup
 
+PHONY: aws.login
+aws.login: ## login to AWS ECR
+	aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${REGISTRY_DOMAIN}
+
 PHONY: image.build
 image.build: ## build docker image for production
-	docker build --target production -t ${IMAGE_NAME}:${IMAGE_TAG} .
+	docker build --no-cache --target production -t ${IMAGE_NAME}:${IMAGE_TAG} .
 
 PHONY: image.push
 image.push: ## push image to docker registry
