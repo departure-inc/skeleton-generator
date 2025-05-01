@@ -21,6 +21,7 @@ services:
       dockerfile: Dockerfile.dev
       target: development
     command: bundle exec foreman start -f Procfile.dev
+    # command: bin/dev
     tty: true
     stdin_open: true
     volumes:

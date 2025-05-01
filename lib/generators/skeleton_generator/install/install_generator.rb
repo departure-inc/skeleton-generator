@@ -22,7 +22,7 @@ module SkeletonGenerator
     end
 
     def copy_rubocop_files
-      create_file '.rubocop.yml'
+      run 'touch .rubocop.yml'
       copy_file '.rubocop.skeleton.yml'
       append_file '.rubocop.yml', %(inherit_from: .rubocop.skeleton.yml\n)
     end
@@ -58,8 +58,6 @@ module SkeletonGenerator
     end
 
     def extend_webapp_root_gemfile
-      return unless yes?('Would you like to slim files? (y/N)')
-
       gem 'slim-rails'
     end
 
@@ -156,8 +154,8 @@ module SkeletonGenerator
       directory 'app/views'
 
       remove_file 'app/views/layouts/application.html.erb'
-      remove_file 'app/views/layouts/mail.html.erb'
-      remove_file 'app/views/layouts/mail.text.erb'
+      remove_file 'app/views/layouts/mailer.html.erb'
+      remove_file 'app/views/layouts/mailer.text.erb'
     end
 
     def extend_application_config
@@ -201,28 +199,28 @@ module SkeletonGenerator
     end
 
     def bundle_generator_rspec
-      return unless yes?('Would you like to rspec? (y/N)')
+      return unless recommended?('Would you like to rspec?')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
       generate 'rspec:install'
     end
 
     def bundle_generator_bullet
-      return unless yes?('Would you like to bullet? (y/N)')
+      return unless recommended?('Would you like to bullet?')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
       generate 'bullet:install'
     end
 
     def bundle_importmap
-      return unless yes?('Would you like to importmap? (y/N)')
+      return unless recommended?('Would you like to importmap?')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'importmap:install'
     end
 
     def bundle_stimulus
-      return unless yes?('Would you like to hotwire and stimulus? (y/N)')
+      return unless recommended?('Would you like to hotwire and stimulus?')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'turbo:install'
@@ -230,7 +228,7 @@ module SkeletonGenerator
     end
 
     def bundle_css
-      return unless yes?('Would you like to tailwindcss? (y/N)')
+      return unless recommended?('Would you like to tailwindcss?')
 
       Bundler.with_original_env { in_root { run 'bundle' } }
       rails_command 'tailwindcss:install'
@@ -274,6 +272,11 @@ module SkeletonGenerator
           enable_starttls_auto: true
         }
       CODE
+    end
+
+    def recommended?(message)
+      answer = ask("#{message} (Y/n)")
+      answer.strip.empty? || answer.downcase.start_with?('y')
     end
   end
 end
