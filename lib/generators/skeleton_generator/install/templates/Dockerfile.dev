@@ -1,4 +1,6 @@
-# syntax=docker/dockerfile:1.3-labs
+# syntax=docker/dockerfile:1.7-labs
+# check=error=true
+
 ARG RUBY_VERSION=3.3.5
 FROM ruby:$RUBY_VERSION-slim AS development
 
@@ -7,7 +9,7 @@ ENV LANG C.UTF-8
 ENV RUBYOPT="--yjit"
 
 RUN <<eos
-apt-get update -qq && apt-get install -y build-essential libpq-dev vim apt-transport-https curl git
+apt-get update -qq && apt-get install -y build-essential libjemalloc2 libvips postgresql-client libpq-dev vim apt-transport-https curl git
 gem install bundler
 eos
 
